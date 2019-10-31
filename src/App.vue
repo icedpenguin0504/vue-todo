@@ -16,7 +16,9 @@
           <th>{{ item.id }}</th>
           <td>{{ item.comment }}</td>
           <th>
-            <button>{{ item.state }}</button>
+            <button v-on:click="doChangeState(item)">
+              {{ item.state ? 'Done' : 'Doing' }}
+            </button>
           </th>
           <th>
             <button>Delete</button>
@@ -56,6 +58,9 @@ export default {
       });
       // 入力値をリセット
       comment.value = '';
+    },
+    doChangeState(item) {
+      item.state = (item.state + 1) % 2;
     }
   }
 }
@@ -65,7 +70,7 @@ export default {
 $base-color: #0298E4;
 $container-width: 650px;
 $id-width: 45px;
-$state-width: 45px;
+$state-width: 60px;
 $delete-width: 45px;
 
 .container {
@@ -115,6 +120,7 @@ button {
   color: white;
   border-radius: 10px;
   font-size: 16px;
+  outline: none;
 }
 
 .add-form {
