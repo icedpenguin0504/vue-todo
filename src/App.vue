@@ -12,12 +12,15 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="item in $data.todos" v-bind:key="item.id">
+        <tr
+          v-for="item in $data.todos"
+          v-bind:key="item.id"
+          v-bind:class="{done: item.isDone}">
           <th>{{ item.id }}</th>
           <td>{{ item.comment }}</td>
           <th>
             <button v-on:click="doChangeState(item)">
-              {{ item.state ? 'Done' : 'Doing' }}
+              {{ item.isDone ? 'Done' : 'Doing' }}
             </button>
           </th>
           <th>
@@ -54,13 +57,13 @@ export default {
       this.$data.todos.push({
         id: this.$data.todos.length,
         comment: comment.value,
-        state: 0
+        isDone: false
       });
       // 入力値をリセット
       comment.value = '';
     },
     doChangeState(item) {
-      item.state = (item.state + 1) % 2;
+      item.isDone = item.isDone ? false : true;
     }
   }
 }
@@ -107,6 +110,10 @@ table {
   tbody {
     tr {
       border-bottom: 2px solid lightgray;
+    }
+    tr.done {
+      background-color: #f5f5f5;
+      color: lightgray;
     }
   }
 }
