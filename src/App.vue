@@ -24,11 +24,12 @@
             </button>
           </th>
           <th>
-            <button>Delete</button>
+            <button v-on:click.shift="doRemove(item)">Delete</button>
           </th>
         </tr>
       </tbody>
     </table>
+    <p>To delete a task, hold down the Shift key and press the 'Delete' button</p>
 
     <!-- create new todo -->
     <h2>Add new task</h2>
@@ -59,11 +60,15 @@ export default {
         comment: comment.value,
         isDone: false
       });
-      // 入力値をリセット
+      // Reset entered value
       comment.value = '';
     },
     doChangeState(item) {
       item.isDone = item.isDone ? false : true;
+    },
+    doRemove(item) {
+      const index = this.$data.todos.indexOf(item);
+      this.$data.todos.splice(index, 1);
     }
   }
 }
