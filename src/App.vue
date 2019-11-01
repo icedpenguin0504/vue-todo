@@ -53,6 +53,24 @@
 </template>
 
 <script>
+// Use local storage
+const STORAGE_KEY = 'todos';
+const todoStorage = {
+  fetch() {
+    const todos = JSON.parse(
+      localStorage.getItem(STORAGE_KEY) || '[]'
+    );
+    todos.forEach((todo, index) => {
+      todo.id = index;
+    });
+    todoStorage.uid = todos.length;
+    return todos;
+  },
+  save(todos) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+  }
+}
+
 export default {
   name: 'App',
   data() {
@@ -74,7 +92,7 @@ export default {
         return;
       }
       this.$data.todos.push({
-        id: this.$data.todos.length,
+        id: todoStorage.uid++,
         comment: comment.value,
         state: 0
       });
@@ -95,6 +113,19 @@ export default {
         return this.$data.current === -1 ? true : this.$data.current === el.state;
       });
     }
+  },
+  watch: {
+    todos: {
+      handler(todos) {
+        // Save todos to local storage automatically
+        todoStorage.save(todos);
+
+      },
+      deep: true
+    }
+  },
+  created() {
+    this.todos = todoStorage.fetch();
   }
 }
 </script>
