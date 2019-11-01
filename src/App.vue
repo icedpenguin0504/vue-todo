@@ -1,6 +1,18 @@
 <template lang="html">
   <div class="container">
     <h1>ToDo app with Vue.js</h1>
+
+    <!-- select condition -->
+    <div class="select-form">
+      <label class="condition"
+        v-for="(label, index) in $data.options" v-bind:key="index">
+        <input type="radio"
+          v-model="current"
+          v-bind:value="label.value">{{ label.label }}
+      </label>
+      <p>({{ computedTodos.length }} tasks)</p>
+    </div>
+
     <!-- show todos -->
     <table>
       <thead>
@@ -13,14 +25,14 @@
       </thead>
       <tbody>
         <tr
-          v-for="item in $data.todos"
+          v-for="item in computedTodos"
           v-bind:key="item.id"
-          v-bind:class="{done: item.isDone}">
+          v-bind:class="{done: item.state}">
           <th>{{ item.id }}</th>
           <td>{{ item.comment }}</td>
           <th>
             <button v-on:click="doChangeState(item)">
-              {{ item.isDone ? 'Done' : 'Doing' }}
+              {{ item.state ? 'Done' : 'Doing' }}
             </button>
           </th>
           <th>
@@ -45,7 +57,13 @@ export default {
   name: 'App',
   data() {
     return {
-      todos: []
+      todos: [],
+      options: [
+        {value: -1, label: 'All'},
+        {value: 0, label: 'Doing'},
+        {value: 1, label: 'Done'}
+      ],
+      current: -1
     };
   },
   methods: {
@@ -58,17 +76,24 @@ export default {
       this.$data.todos.push({
         id: this.$data.todos.length,
         comment: comment.value,
-        isDone: false
+        state: 0
       });
       // Reset entered value
       comment.value = '';
     },
     doChangeState(item) {
-      item.isDone = item.isDone ? false : true;
+      item.state = item.state ? 0 : 1;
     },
     doRemove(item) {
       const index = this.$data.todos.indexOf(item);
       this.$data.todos.splice(index, 1);
+    }
+  },
+  computed: {
+    computedTodos() {
+      return this.$data.todos.filter((el) => {
+        return this.$data.current === -1 ? true : this.$data.current === el.state;
+      });
     }
   }
 }
@@ -86,6 +111,19 @@ $delete-width: 45px;
   width: $container-width;
   margin: 0 auto;
 }
+
+.select-form {
+  margin: 50px 0 10px 0;
+
+  .condition {
+    margin-right: 20px;
+  }
+
+  p {
+    display: inline-block;
+  }
+}
+
 
 table {
   border-collapse: collapse;  // for setting border
